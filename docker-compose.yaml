@@ -1,0 +1,52 @@
+# docker compose down; rm -r db dbschema; docker compose up -d
+
+# psql -h localhost -p 5432 -U pguser -d pgdb -W
+# psql postgresql://pguser:5432@localhost/pgdb
+# psql postgresql://pgu2:5432@localhost/pgd2
+# psql postgresql://pguser:pgpass@postgres/pgdb # works!
+
+version: "3"
+services:
+  postgres:
+    image: postgres:14.5-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpass
+      POSTGRES_DB: pgdb
+    ports:
+      - "5432:5432"
+    volumes: 
+      - "./db:/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  edgedb:
+    image: edgedb/edgedb
+    environment:
+      EDGEDB_SERVER_SECURITY: insecure_dev_mode
+      # EDGEDB_SERVER_GENERATE_SELF_SIGNED_CERT: 1
+      EDGEDB_SERVER_PASSWORD: "password"
+      EDGEDB_SERVER_BACKEND_DSN: "postgresql://pguser:pgpass@postgres/pgdb"
+    volumes:
+      - "./dbschema:/dbschema"
+    ports:
+      - "5656:5656"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    
+    # command: edgedb-server
+  pg2:
+    image: postgres:14.5-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: pgu2
+      POSTGRES_PASSWORD: pgp2
+      POSTGRES_DB: pgd2
+    depends_on:
+      - "postgres"
+
+
