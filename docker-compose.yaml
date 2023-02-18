@@ -1,9 +1,27 @@
+# edgedb cli upgrade
 # docker compose down; rm -r db dbschema; docker compose up -d
+# docker compose logs -f edgedb
+# edgedb instance link --dsn="edgedb://edgedb:password@localhost:5656/edgedb"
+# edgedb -I localhost
+# edgedb ui -I localhost
+## Run "create example database"
 
-# psql -h localhost -p 5432 -U pguser -d pgdb -W
+# docker compose exec postgres bash
 # psql postgresql://pguser:5432@localhost/pgdb
-# psql postgresql://pgu2:5432@localhost/pgd2
-# psql postgresql://pguser:pgpass@postgres/pgdb # works!
+# \l
+# SELECT table_schema,table_name FROM information_schema.tables WHERE table_name not like 'pg_%';
+# \c V2f147ded60_edgedb
+# \c V2f147ded60__example
+# \dn+
+# set search_path to edgedbpub;
+# select * from "7a3c0e71-afdd-11ed-8615-efff3d9b3734"; # for example...
+
+# In pg2: # psql postgresql://pgu2:5432@localhost/pgd2
+# In pg2: # psql postgresql://pguser:pgpass@postgres/pgdb # works!
+# In postgres: # psql -h localhost -p 5432 -U pguser -d pgdb -W
+
+
+# psql -h localhost -p 5432 -U pguser -d edgedb -W
 
 version: "3"
 services:
@@ -30,6 +48,7 @@ services:
       # EDGEDB_SERVER_GENERATE_SELF_SIGNED_CERT: 1
       EDGEDB_SERVER_PASSWORD: "password"
       EDGEDB_SERVER_BACKEND_DSN: "postgresql://pguser:pgpass@postgres/pgdb"
+      EDGEDB_SERVER_ADMIN_UI: "enabled"
     volumes:
       - "./dbschema:/dbschema"
     ports:
