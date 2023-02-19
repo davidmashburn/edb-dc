@@ -7,6 +7,9 @@
 ## Run "create example database"
 
 # docker compose exec postgres bash
+# pg_dumpall -h localhost -U pguser -W -f out.sql
+# docker compose cp postgres:/out.sql .
+
 # psql postgresql://pguser:5432@localhost/pgdb
 # \l
 # SELECT table_schema,table_name FROM information_schema.tables WHERE table_name not like 'pg_%';
@@ -41,6 +44,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    command: ["postgres", "-c", "log_statement=all"]
   edgedb:
     image: edgedb/edgedb
     environment:
