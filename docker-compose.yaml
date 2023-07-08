@@ -2,6 +2,7 @@
 # docker compose down; rm -r db dbschema; docker compose up -d
 # docker compose logs -f edgedb
 # edgedb instance link --dsn="edgedb://edgedb:password@localhost:5656/edgedb"
+# edgedb project init # say yes, give name as localhost
 # edgedb -I localhost
 # edgedb ui -I localhost
 ## Run "create example database"
